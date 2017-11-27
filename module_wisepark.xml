@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_wisepark" default="compile.module.wisepark">
+  <dirname property="module.wisepark.basedir" file="${ant.file.module_wisepark}"/>
+  
+  <property name="module.jdk.home.wisepark" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.wisepark" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.wisepark" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.wisepark" value="-encoding GBK -source 8 ${compiler.args}"/>
+  
+  <property name="wisepark.output.dir" value="${module.wisepark.basedir}/out/production/WisePark"/>
+  <property name="wisepark.testoutput.dir" value="${module.wisepark.basedir}/out/test/WisePark"/>
+  
+  <path id="wisepark.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="wisepark.module.production.classpath">
+    <path refid="${module.jdk.classpath.wisepark}"/>
+  </path>
+  
+  <path id="wisepark.runtime.production.module.classpath">
+    <pathelement location="${wisepark.output.dir}"/>
+  </path>
+  
+  <path id="wisepark.module.classpath">
+    <path refid="${module.jdk.classpath.wisepark}"/>
+    <pathelement location="${wisepark.output.dir}"/>
+  </path>
+  
+  <path id="wisepark.runtime.module.classpath">
+    <pathelement location="${wisepark.testoutput.dir}"/>
+    <pathelement location="${wisepark.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.wisepark">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.wisepark">
+    <patternset refid="excluded.from.module.wisepark"/>
+  </patternset>
+  
+  <path id="wisepark.module.sourcepath">
+    <dirset dir="${module.wisepark.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.wisepark" depends="compile.module.wisepark.production,compile.module.wisepark.tests" description="Compile module WisePark"/>
+  
+  <target name="compile.module.wisepark.production" depends="register.custom.compilers" description="Compile module WisePark; production classes">
+    <mkdir dir="${wisepark.output.dir}"/>
+    <javac2 destdir="${wisepark.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.wisepark}/javac">
+      <compilerarg line="${compiler.args.wisepark}"/>
+      <bootclasspath refid="wisepark.module.bootclasspath"/>
+      <classpath refid="wisepark.module.production.classpath"/>
+      <src refid="wisepark.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.wisepark"/>
+    </javac2>
+    
+    <copy todir="${wisepark.output.dir}">
+      <fileset dir="${module.wisepark.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.wisepark.tests" depends="register.custom.compilers,compile.module.wisepark.production" description="compile module WisePark; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.wisepark" description="cleanup module">
+    <delete dir="${wisepark.output.dir}"/>
+    <delete dir="${wisepark.testoutput.dir}"/>
+  </target>
+</project>
