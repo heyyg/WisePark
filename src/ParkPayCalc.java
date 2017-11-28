@@ -31,7 +31,7 @@ public class ParkPayCalc {
         long hours = minutes/60;	// 计算整小时
         long lastmin = minutes%60;	// 多余的分钟
         if( lastmin > 0 ) hours += 1;
-        // 每天最高
+        // 不能每天最高
         dPay += Math.min((hours - 1) * perHourPay + firstHourPay, dayUpperPay);
 
         return dPay;
